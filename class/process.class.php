@@ -5,62 +5,94 @@
  * Esta clase cumple con el trabajo de procesar todas las formas.
  * */
 include("session.class.php");
+include("ejercisio.class.php");
+include("catalogos.class.php"); 
+//include("catalogos.class.php");
+
+
 class Process
 {
    /* Constructor de clase */
    function Process(){
       global $session;
-      /* Log in */
+      /* Prosesar formas */
       if(isset($_POST['login'])){
          $this->login();
       }
-      // log out
+      if(isset($_GET['timeout'])){
+        $this->timeout();
+        //echo "TIMEOUT!";
+      }
       if(isset($_GET["logout"])){
         $this->Logout();
-        echo "ACTIVO";
       }
-     
+      if(isset($_GET["ejer_ins"])){
+        $this->ejer_ins();
+      }
+      if(isset($_GET["cuenta_ins"])){
+        $this->cuenta_ins();
+      }
+      if(isset($_GET["set_ejer"])){
+        $this->set_ejer();
+      }
       
       /**
-       * Nunca deveriamos de llegar asta aqui pero en caso regresar al index.
+       * Should not get here, which means user is viewing this page
+       * by mistake and therefore is redirected.
        */
-       else{
-          header("Location: ../index.php");
-       }
+      
    }
 
-   //Funcion Login, manda a llamar la clase session y manda las variables
+   
    function login(){
       global $session;
-      /* Intentar Iniciar session manando a Session usuario y contrasena*/
+      /* Login attempt */
       $retval = $session->login($_POST['user'], $_POST['pass']);
       
-      /* Se pudo iniciar session mandar a main.php*/
+      /* Login successful */
       if($retval){
          header("Location:../main.php");
         //echo "LOGIN!";
       }
-      /* no se pudo iniciar session */
+      /* Login failed */
       else{
          header("location:../index.php?error=2");
+         //echo "wrong something.";
       }
    }
    
-   /**
-    * Logout()- Terminar Session y regresa a index.php para poder iniciar
-    * session de nuevo.
-    */
    function Logout(){
       global $session;
       $retval = $session->logout();
       header("Location: ../index.php?logout");
    }
-   
-   
+
+   function timeout(){
+      global $session;
+      $nom_usuario=$_SESSION['username'];
+      $session->logout();
+      header("Location: ../timeout.php?user=$nom_usuario");
+   }
+
+   function set_ejer(){
+   global $session;
+   $session->setEjersio($_GET['set_ejer']);
+   header("Location: ../main.php");
+   }
+   function ejer_ins(){
+      global $ejercisio;
+      $ejercisio->insEjercisio($_POST['nom_Empresa'],$_POST['descripcion'],$_POST['rfc'],$_POST['direccion'],$_POST['telefono']);
+      header("Location: ../main.php?ejercisios");
+   }
+   function cuenta_ins(){
+      global $catalogo;
+      $catalogo->insCuenta($_POST['nombre'],$_POST['descripcion'],$_POST['tipo'],$_POST['ejercisio']);
+    //  header("Location: ../main.php");
+   }
    
   
 };
 
-/* iniciar Clase */
+/* Initialize process */
 $process = new Process;
 ?>

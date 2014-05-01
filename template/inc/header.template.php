@@ -13,48 +13,32 @@
 <!--logo end-->
 
 <div class="nav notify-row" id="top_menu">
+
     <!--  notification start -->
     <ul class="nav top-menu">
+
+         <?php
+                            include("class/ejercisio.class.php"); 
+                            global $ejercisio;
+                            $id=$_SESSION['id_ejercisio'];
+                            $content=$ejercisio->getEjercisio($id);
+                            $row = mysql_fetch_array($content);
+         ?>
+
+        <?php 
+        if ($_SESSION['id_ejercisio']==NULL){
+            echo "<span class='label label-danger'>Selecionar Ejercisio</span>";
+
+        }else{
+
+        ?>
         
-        <!-- notification dropdown start-->
-        <li id="header_notification_bar" class="dropdown">
-            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+<button data-original-title="<?php echo $row['nom_Empresa'];?>" data-content="<?php echo $row['descripcion'];?>" data-placement="bottom" data-trigger="hover" class="btn btn-info popovers"><?php echo $row['nom_Empresa'];?></button>
+        
+         <?php
+       }
+        ?>
 
-                <i class="fa fa-bell-o"></i>
-                <span class="badge bg-warning">3</span>
-            </a>
-            <ul class="dropdown-menu extended notification">
-                <li>
-                    <p>Notifications</p>
-                </li>
-                <li>
-                    <div class="alert alert-info clearfix">
-                        <span class="alert-icon"><i class="fa fa-bolt"></i></span>
-                        <div class="noti-info">
-                            <a href="#"> Server #1 overloaded.</a>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="alert alert-danger clearfix">
-                        <span class="alert-icon"><i class="fa fa-bolt"></i></span>
-                        <div class="noti-info">
-                            <a href="#"> Server #2 overloaded.</a>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="alert alert-success clearfix">
-                        <span class="alert-icon"><i class="fa fa-bolt"></i></span>
-                        <div class="noti-info">
-                            <a href="#"> Server #3 overloaded.</a>
-                        </div>
-                    </div>
-                </li>
-
-            </ul>
-        </li>
-        <!-- notification dropdown end -->
     </ul>
     <!--  notification end -->
 </div>

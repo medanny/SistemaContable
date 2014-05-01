@@ -30,6 +30,7 @@
 <script src="template/assets/flot-chart/jquery.flot.pie.resize.js"></script>
 
 <script src="template/assets/iCheck-master/jquery.icheck.js"></script>
+<script type="text/javascript" src="template/assets/bootstrap-inputmask/bootstrap-inputmask.min.js"></script>
 
 <!--common script init for all pages-->
 <script src="template/js/scripts.js"></script>

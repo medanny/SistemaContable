@@ -10,12 +10,13 @@
         
   class Session//Inicio de clase
   {
-      var $user;     //Usuario
+      var $username;     //Usuario
       var $password;       //Contrasena
       var $name;    //nombre
-      var $id;         //id
-      var $lvl;          //nivel
+      var $userid;         //id
+      var $userlevel;          //nivel
       var $logged_in;    //Verdadero o Falso
+      var $id_ejercisio; // La id del ejercisio selecionado
       var $userinfo = array();  //Array con toda la informacion del usuario
       
       function Session(){
@@ -23,48 +24,71 @@
             }
 
      function startSession(){
-        global $database;  //Conexion a la base de datos
-        session_start();   //Iniciar Session con PHP
+        global $database;  //The database connection
+        session_start();   //Tell PHP to start the session
         
         $this->logged_in = $this->checkLogin();
       }
       
       function checkLogin(){
-        global $database,$user;
-      
+        global $database,$user;  //The database connection
+        
+        /* Username and userid have been set and not guest */
+        
+        
         if(isset($_SESSION['username']) && isset($_SESSION['id'])){
+           /* Confirm that username and userid are valid */
+
            if($user->confirmUserID($_SESSION['username'], $_SESSION['id']) != 0){
-             unset($_SESSION['username']);
+              /* Variables are incorrect, user not logged in */
+              unset($_SESSION['username']);
               unset($_SESSION['userid']);
               return false;
            }
-           
+           /* User is logged in, set class variables */
            $this->userinfo  = $user->getUserInfo($_SESSION['username']);
            $this->username  = $this->userinfo['username'];
            $this->userid    = $this->userinfo['id'];
            $this->userlevel = $this->userinfo['lvl'];
+           $this->id_ejercisio = $this->userinfo['ultimo_ejercisio'];
            return true;
         }
-        /* el usuario no a iniciado session */
+        /* User not logged in */
         else{
            return false;
         }
      }
 
-      function logout(){ 
+      function logout(){  //The database connection
      
-      /* Eliminar variables de session */
+      /* Unset PHP session variables */
       unset($_SESSION['username']);
       unset($_SESSION['id']);
 
-      /* reflejar que el usuario no a iniciado */
+      /* Reflect fact that user has logged out */
       $this->logged_in = false;
    }
+   function setEjersio($id){  //The database connection
+   global $user;
+   $_SESSION['id_ejercisio']=$id;
+   $this->id_ejercisio = $id;
+   $id_user=$_SESSION['id'];
+   $user->setEjercisio($id,$id_user);
+   }
+   
+   function getEjersio(){  //The database connection
+   global $user;
+   $content=getUserInfo($_SESSION['username']);
+   return $content['ultimo_ejercisio'];
+   }
 
-     function login($subuser, $subpass){
+   function login($subuser, $subpass){
       global $database,$user;  
+
+      ;  //The database and form object
       $result = $user->confirmUserPass($subuser, md5($subpass));
 
+      /* Check error codes */
       if($result == 1){
          $field = "user";
       }
@@ -72,17 +96,20 @@
          $field = "pass";
       }
       
+      /* Return if form errors exist */
       if($result>=1){
          return false;
       }
 
-      /* Usuario y contrasena son correcotos, registrar variables de session */
+      /* Username and password correct, register session variables */
       $this->userinfo  = $user->getUserInfo($subuser);
       $this->username  = $_SESSION['username'] = $this->userinfo['username'];
       $this->userid    = $_SESSION['id']   = $this->userinfo['id'];
       $this->userlevel = $this->userinfo['lvl'];
+      $this->id_ejercisio = $_SESSION['id_ejercisio']=$this->userinfo['ultimo_ejercisio'];
       
-         /* A iniciado session*/
+      
+         /* Login completed successfully */
       return true;
    }
 

@@ -10,8 +10,26 @@ header("location:index.php?error=3");
 if($check&&isset($isindex)){
 header("location:main.php");
 }
+if(empty($isindex)){
 ?>
 
+<script type="text/javascript">
+var t;
+window.onload=resetTimer;
+document.onkeypress=resetTimer;
+
+function logout()
+{
+    location.href='class/process.class.php?timeout=1'
+
+}
+function resetTimer()
+{
+    clearTimeout(t);
+    t=setTimeout(logout,180000) //logs out in 30 minutes
+}
+</script>
+<?php } ?>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">

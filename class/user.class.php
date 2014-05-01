@@ -38,33 +38,44 @@
         }
      }
 
-     
+
      function getUserInfo($username){
       global $database;
 
       $q = "SELECT * FROM usuario WHERE username = '$username'";
       $result = $database->query($q);
+      /* Error occurred, return given name by default */
       if(!$result || (mysql_numrows($result) < 1)){
          return NULL;
       }
+      /* Return result array */
       $dbarray = mysql_fetch_array($result);
       return $dbarray;
    }
 
    function confirmUserPass($username, $password){
       global $database;
+      /* Verify that user is in database */
       $result=$database->selectField("usuario","username",$username);
       if(!$result || (mysql_numrows($result) < 1)){
-         return 1; 
+         return 1; //Indicates username failure
       }
 
+      /* Retrieve password from result, strip slashes */
       $dbarray = mysql_fetch_array($result);
+      /* Validate that password is correct */
       if($password == $dbarray['password']){
-         return 0;
+         return 0; //Success! Username and password confirmed
       }
       else{
-         return 2;
+         return 2; //Indicates password failure
       }
+   }
+
+   function setEjercisio($id,$user_id){
+   global $database;
+   $database->updateField("usuario", "ultimo_ejercisio", $id, "id", $user_id);
+
    }
      
   };

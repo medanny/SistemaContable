@@ -7,6 +7,7 @@ include("template/inc/head.template.php");
 //include("template/inc/sidebar.template.php");
 //include("template/inc/contstart.template.php");
 include("template/inc/login.template.php")
+
 ?>
        
             
